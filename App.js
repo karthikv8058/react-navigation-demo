@@ -6,7 +6,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 
-import { View, Text } from 'react-native';
+import { View, Text,Button } from 'react-native';
 
 import React, { Component } from 'react';
 
@@ -27,12 +27,21 @@ const MeterialTopTabs = createMaterialTopTabNavigator();
 
 export default class App extends Component {
 
-  render() {
-  
-    createHomeStack = () =>
+  componentWillMount(){
+    createHomeStack = ({ navigation }) =>
     <Stack.Navigator>
       <Stack.Screen options={{
-          title: 'My home',
+          headerRight:
+            () =>(
+              <Button
+              onPress={()=>{navigation.openDrawer()}}
+              title="Menu"
+              color="#000"
+            />
+              )
+          ,
+          headerTitleAlign:'center',
+          title: 'Home',
           headerStyle: {
             backgroundColor: '#f4511e',
           },
@@ -40,24 +49,56 @@ export default class App extends Component {
           headerTitleStyle: {
             fontWeight: 'bold',
           },
+          
         }} name="Feeds" component={Feed} />
       <Stack.Screen name="Details" component={Details} />
+      
       <Stack.Screen options={{
         headerStyle:{backgroundColor:'#00306b'},
         headerTitleStyle:{color:'#fff'},
+        headerTitleAlign:'center',
         headerBackTitleStyle:{color:'#fff',backgroundColor:'#fff'}
         }} name="Top Tabs" children={createTopTabs} />
+
       <Stack.Screen name="Bottom Tabs" children={createBottomTabs} />
     </Stack.Navigator>
 
+    createContactStack = ({navigation}) => <Stack.Navigator>
+      <Stack.Screen options={{
+        headerRight: () => (
+          <Button
+              onPress={()=>{navigation.openDrawer()}}
+              title="Menu"
+              color="#000"
+            />
+        ),
+        headerTitleAlign:'center'
+      }} name="Contact" component={Contact}/>
+    </Stack.Navigator>
+
+  createSettingsStack = ({navigation}) => <Stack.Navigator>
+  <Stack.Screen options={{
+    headerRight: () => (
+      <Button
+          onPress={()=>{navigation.openDrawer()}}
+          title="Menu"
+          color="#000"
+        />
+    ),
+    headerTitleAlign:'center'
+  }} name="Settings" component={Settings}/>
+  </Stack.Navigator>
+
   createTopTabs = () => {
-    return <MeterialTopTabs.Navigator>
+    return <MeterialTopTabs.Navigator tabBarOptions={{
+      style:{backgroundColor:'#00225c'},
+      labelStyle: { fontSize: 12,color:'#fff' },
+      }}>
           <MeterialTopTabs.Screen name="Tab 1" component={Tab1}/>
           <MeterialTopTabs.Screen name="Tab 2" component={Tab2}/>
           <MeterialTopTabs.Screen name="Tab 3" component={Tab3}/>
     </MeterialTopTabs.Navigator>
   }
-
   createBottomTabs = () => {
     return <MeterialBottomTaps.Navigator>
           <MeterialBottomTaps.Screen name="Tab 1" component={Tab1}/>
@@ -65,15 +106,14 @@ export default class App extends Component {
           <MeterialBottomTaps.Screen name="Tab 3" component={Tab3}/>
     </MeterialBottomTaps.Navigator>
   }
-
-  
-
+  }
+  render() {
     return (
       <NavigationContainer>
          <Drawer.Navigator>
            <Drawer.Screen name="Home" children={createHomeStack} />
-           <Drawer.Screen name="Contact" component={Contact} />
-           <Drawer.Screen name="Settings" component={Settings} />
+           <Drawer.Screen name="Contact" children={createContactStack} />
+           <Drawer.Screen name="Settings" component={createSettingsStack} />
          </Drawer.Navigator>
       </NavigationContainer>
     )
